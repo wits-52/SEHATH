@@ -5,6 +5,7 @@ const appointmentSchema = new mongoose.Schema({
     patientId: mongoose.SchemaTypes.ObjectId,
     priscriptionId: mongoose.SchemaTypes.ObjectId,
     examinationId: mongoose.SchemaTypes.ObjectId,
+    treatmentId: mongoose.SchemaTypes.ObjectId,
     date: Date,
     status: String
 });

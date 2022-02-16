@@ -1,9 +1,9 @@
 const express = require('express');
 
-const patientRoutes = require('./routes/patient');
+const userRoutes = require('./routes/user');
 
 const app = express();
 
-app.use('/patient', patientRoutes);
+app.use('/user', userRoutes);
 
 module.exports = app;

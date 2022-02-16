@@ -7,7 +7,9 @@ const patientSchema = new mongoose.Schema({
     address: String,
     fatherName: String,
     phone: Number,
-    aadharNumber: Number
+    aadharNumber: Number,
+    pincode: Number,
+    treatments: [mongoose.SchemaTypes.ObjectId]
 });
 
 const Patient = mongoose.model('Patient', patientSchema);

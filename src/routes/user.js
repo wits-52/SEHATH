@@ -1,8 +1,8 @@
 const router = require('express').Router();
 
 const {
-    Patient
-} = require('../db/models/patient');
+    User
+} = require('../db/models/user');
 
 router.get('/:id', (req, res, next) => {
     res.json({
@@ -13,7 +13,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.post('/signup', (req, res, next) => {
-    const patient = new Patient({
+    const user = new User({
         name: 'John Doe',
         age: 27,
         gender: 'M',
@@ -22,7 +22,7 @@ router.post('/signup', (req, res, next) => {
         phone: 123456789,
         aadharNumber: 123456780000
     });
-    patient.save()
+    user.save()
         .then((savedData) => {
             res.json({
                 data: savedData
