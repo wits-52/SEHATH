@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
  */
 const getConnection = (userName, password, host, database) => {
     const uri = `mongodb+srv://${userName}:${password}@${host}/${database}?retryWrites=true&w=majority`;
-    return mongoose.createConnection(uri).asPromise();
+    return mongoose.connect(uri);
 };
 module.exports = {
     getConnection
