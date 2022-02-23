@@ -80,7 +80,7 @@ router.post('/signup', async (req, res, next) => {
     user.save()
         .then(data => {
             const { _id, __v, password, ...responseData } = data._doc;
-            res.json({
+            res.status(201).json({
                 message: 'User Created!',
                 data: responseData
             });
@@ -122,7 +122,7 @@ router.get('/login', async(req, res, next) => {
         });
         return ;
     }
-    const token = jwt.sign({ email, password, id: user._id}, config.app.secretKey, { expiresIn: '1h'});
+    const token = jwt.sign({ email, id: user._id}, config.app.secretKey, { expiresIn: '1h'});
     res.json({
         data: {
             email: email,

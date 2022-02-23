@@ -3,8 +3,15 @@ const config = require('../../../config/config');
 
 const isAuthenticated = (req, res, next) => {
     const token = req.headers.authorization;
+    if(!token) {
+        res.status(400)
+        .json({
+            error: 'Please provide bearer token in header'
+        });
+        return;
+    }
     const [ tokenType, tokenValue ] = token.split(' ');
-    if(!token || tokenType !== 'Bearer' || !tokenValue) {
+    if(tokenType !== 'Bearer' || !tokenValue) {
         res.status(403);
         res.json({
             error: 'Please provide valid token in headers.'
