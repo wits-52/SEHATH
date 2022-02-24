@@ -132,4 +132,58 @@ router.get('/login', async(req, res, next) => {
     });
 
 });
+
+router.patch('/edit', isAuthenticated, async (req, res, next) => {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+        res.status(404)
+            .json({
+                error: 'User not found. Make sure you are logged in as a user.'
+            });
+        return;
+    }
+    const propertiesThatCanBeUpdated = [ 'address', 'phone', 'pincode'];
+    let changeDetected = false;
+    propertiesThatCanBeUpdated.forEach((property) => {
+        if (req.body[property] && user[property] != req.body[property]) {
+            user[property] = req.body[property];
+            changeDetected = true;
+        }
+    });
+
+    if (changeDetected) {
+        user.save()
+        .then(userData => {
+            const { _id, password, __v, ...data } = userData._doc;
+            res.status(201).json({
+                data: data
+            });
+        })
+        .catch(err => {
+            if (err.name === 'ValidationError') {
+                res.status(400).json({
+                    error: {
+                        name: err.name,
+                        message: err.message
+                    }
+                });
+            } else {
+                res.status(500).json({
+                    error: {
+                        name: err.name,
+                        message: err.message
+                    }
+                });
+            }
+        });
+    } else {
+        res.status(200)
+        .json({
+            data: {
+                message: 'Already updated with the same data provided.'
+            }
+        });
+        return;
+    }
+});
 module.exports = router;
