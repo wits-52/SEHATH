@@ -71,7 +71,7 @@ router.post('/register', async (req, res, next) => {
     });
     doctor.save()
         .then((doctorData) => {
-            const { _id, password, __v,  ...data } = doctorData._doc;
+            const { _id, password, __v, ...data } = doctorData._doc;
             res.status(201).json({
                 data: data
             });
@@ -92,12 +92,11 @@ router.post('/register', async (req, res, next) => {
                     }
                 });
             }
-
         });
 });
-router.get('/login', async(req, res, next) => {
+router.get('/login', async (req, res, next) => {
     const { email, password } = req.body;
-    const user = await Doctor.findOne({email: email});
+    const user = await Doctor.findOne({ email: email });
     if (!user) {
         res.status(404);
         res.json({
@@ -106,14 +105,14 @@ router.get('/login', async(req, res, next) => {
         return;
     }
     const matchPassword = await bcrypt.compare(password, user.password);
-    if(!matchPassword) {
+    if (!matchPassword) {
         res.status(401);
         res.json({
             error: 'Wrong Password. Please try again.'
         });
-        return ;
+        return;
     }
-    const token = jwt.sign({ email, id: user._id}, config.app.secretKey, { expiresIn: '1h'});
+    const token = jwt.sign({ email, id: user._id }, config.app.secretKey, { expiresIn: '1h' });
     res.json({
         data: {
             email: email,
@@ -123,13 +122,13 @@ router.get('/login', async(req, res, next) => {
     });
 
 });
-router.get('/profile/me', isAuthenticated, async(req, res, next) => {
-    const doctor = await Doctor.findById(req.user.id); 
-    if(!doctor) {
+router.get('/profile/me', isAuthenticated, async (req, res, next) => {
+    const doctor = await Doctor.findById(req.user.id);
+    if (!doctor) {
         res.status(404)
-        .json({
-            error: 'Doctor not found. Make sure you are logged in as a doctor.'
-        });
+            .json({
+                error: 'Doctor not found. Make sure you are logged in as a doctor.'
+            });
         return;
     }
     const { _id, __v, password, ...data } = doctor._doc;
@@ -137,30 +136,83 @@ router.get('/profile/me', isAuthenticated, async(req, res, next) => {
         data
     });
 });
-router.get('/profile/:userName', isAuthenticated, async(req, res, next) => {
-    const user = await Doctor.findOne({userName: req.params.userName});
-    if(!user) {
+router.get('/profile/:userName', isAuthenticated, async (req, res, next) => {
+    const user = await Doctor.findOne({ userName: req.params.userName });
+    if (!user) {
         res.status(404)
-        .json({
-            error: 'User not found. Please check username.'
-        });
+            .json({
+                error: 'User not found. Please check username.'
+            });
         return;
     }
     res.status(200)
-    .json({
-        data: {
-            name: user.name,
-            speciality: user.speciality,
-            designation: user.designation,
-            consultancyFees: user.consultancyFees,
-            address: user.address,
-            pincode: user.pincode,
-            email: user.email,
-            phone: user.phone,
-            hospitalName: user.hospitalName,
-            availabilitytimeStart: user.availabilitytimeStart,
-            availabilitytimeEnd: user.availabilitytimeEnd
+        .json({
+            data: {
+                name: user.name,
+                speciality: user.speciality,
+                designation: user.designation,
+                consultancyFees: user.consultancyFees,
+                address: user.address,
+                pincode: user.pincode,
+                email: user.email,
+                phone: user.phone,
+                hospitalName: user.hospitalName,
+                availabilitytimeStart: user.availabilitytimeStart,
+                availabilitytimeEnd: user.availabilitytimeEnd
+            }
+        });
+});
+router.patch('/edit', isAuthenticated, async (req, res, next) => {
+    const doctor = await Doctor.findById(req.user.id);
+    if (!doctor) {
+        res.status(404)
+            .json({
+                error: 'Doctor not found. Make sure you are logged in as a doctor.'
+            });
+        return;
+    }
+    const propertiesThatCanBeUpdated = ['consultancyFees', 'address', 'hospitalName', 'phone', 'availabilitytimeEnd', 'availabilitytimeStart', 'pincode'];
+    let changeDetected = false;
+    propertiesThatCanBeUpdated.forEach((property) => {
+        if (req.body[property] && doctor[property] != req.body[property]) {
+            doctor[property] = req.body[property];
+            changeDetected = true;
         }
     });
+
+    if (changeDetected) {
+        doctor.save()
+        .then(doctorData => {
+            const { _id, password, __v, ...data } = doctorData._doc;
+            res.status(201).json({
+                data: data
+            });
+        })
+        .catch(err => {
+            if (err.name === 'ValidationError') {
+                res.status(400).json({
+                    error: {
+                        name: err.name,
+                        message: err.message
+                    }
+                });
+            } else {
+                res.status(500).json({
+                    error: {
+                        name: err.name,
+                        message: err.message
+                    }
+                });
+            }
+        });
+    } else {
+        res.status(200)
+        .json({
+            data: {
+                message: 'Already updated with the same data provided.'
+            }
+        });
+        return;
+    }
 });
 module.exports = router;
