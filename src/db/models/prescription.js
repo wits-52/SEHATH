@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const prescriptionSchema = new mongoose.Schema({
-    appointmentId: ObjectId,
+    appointmentId: mongoose.SchemaTypes.ObjectId,
     medicine: [{
         name: String,
-        dosage: String
+        notes: String
     }],
     durationInDays: Number
 });

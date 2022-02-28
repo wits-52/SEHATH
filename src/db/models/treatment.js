@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const treatmentSchema = new mongoose.Schema({
-    doctorId: mongoose.SchemaTypes.ObjectId,
-    userId: mongoose.SchemaTypes.ObjectId,
+    doctorUserName: String,
+    userUserName: String,
     appointmentId: [mongoose.SchemaTypes.ObjectId],
     nextAppointmentDate: Date,
     status: String,
