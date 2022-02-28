@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const priscriptionSchema = new mongoose.Schema({
+const prescriptionSchema = new mongoose.Schema({
     appointmentId: ObjectId,
     medicine: [{
         name: String,
@@ -9,9 +9,9 @@ const priscriptionSchema = new mongoose.Schema({
     durationInDays: Number
 });
 
-const Priscription = mongoose.model('Priscription', priscriptionSchema);
+const Prescription = mongoose.model('Prescription', prescriptionSchema);
 
 module.exports = {
-    Priscription,
-    priscriptionSchema
+    Prescription,
+    prescriptionSchema
 };
