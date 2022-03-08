@@ -80,12 +80,19 @@ router.patch('/edit/:id', isAuthenticated, async (req, res, next) => {
     const user = await User.findById(req.user.id);
     if (!user) {
         res.status(404)
-            .json({
-                error: 'User not found. Make sure you are logged in as a user.'
-            });
+        .json({
+            error: 'User not found. Make sure you are logged in as a user.'
+        });
         return;
     }
     const patient = await Patient.findById(req.params.id);
+    if(!patient || !patient.registeredByUserId.equals(req.user.id)) {
+        res.status(404)
+        .json({
+            error: 'Patient not found. Make sure you passed correct id.'
+        });
+        return;
+    }
     const propertiesThatCanBeUpdated = [ 'address', 'phone', 'pincode', 'age'];
     
     let changeDetected = false;
