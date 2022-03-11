@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 
 const prescriptionSchema = new mongoose.Schema({
-    appointmentId: mongoose.SchemaTypes.ObjectId,
+    appointmentId: { type: mongoose.SchemaTypes.ObjectId, required: (true, '{PATH} is required.') },
     medicine: [{
-        name: String,
-        notes: String
+        name: { type: String, required: (true, '{PATH} is required.') },
+        notes: { type: String, required: (true, '{PATH} is required.') }
     }],
-    durationInDays: Number
+    prescribedByDoctorId: {type: mongoose.SchemaTypes.ObjectId, required: (true, '{PATH} is required.') },
+    prescriptionForPatientId: { type: mongoose.SchemaTypes.ObjectId, required: (true, '{PATH} is required.')},
+    durationInDays: { type: Number, required: (true, '{PATH} is required') }
 });
 
 const Prescription = mongoose.model('Prescription', prescriptionSchema);
