@@ -36,6 +36,7 @@ router.post('/register', isAuthenticated, async (req, res, next) => {
             message: 'Patient registered!',
             data: responseData
         });
+        return;
     })
     .catch(err => {
         if (err.name === 'ValidationError') {
@@ -52,6 +53,7 @@ router.post('/register', isAuthenticated, async (req, res, next) => {
                     message: err.message
                 }
             });
+            return;
         }
 
     });
